@@ -1,2 +1,2 @@
-# js-game-of-life
+# Javscript game of life
 Javascript game of life implementation

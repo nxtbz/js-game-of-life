@@ -95,7 +95,7 @@ const get_next_generation = (generation, num_cols) => {
     return generation.map(cell_will_live);
 };
 
-const game_of_life = (cell_size = 5, interval = 20) => {
+const game_of_life = (cell_size = 5) => {
     let canvas = create_canvas();
     let canvas_ctxt = canvas.getContext('2d');
     const num_rows = Math.floor(canvas.height / cell_size);
@@ -145,7 +145,7 @@ const game_of_life = (cell_size = 5, interval = 20) => {
         if (running) {
             current_generation = get_next_generation(current_generation, num_cols);
             draw(canvas_ctxt, cell_size, current_generation, num_cols);
-            setTimeout(run, interval);
+            window.requestAnimationFrame(run);
         }
     };
 

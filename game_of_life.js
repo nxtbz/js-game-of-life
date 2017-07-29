@@ -65,7 +65,7 @@ const get_next_generation = (generation) => {
     return generation.map(row_will_live);
 };
 
-const game_of_life = (cell_size = 2) => {
+const game_of_life = (cell_size = 5) => {
     let canvas = create_canvas();
     const num_rows = Math.floor(canvas.height / cell_size);
     const num_cols = Math.floor(canvas.width / cell_size);

@@ -1,4 +1,4 @@
-# Conway's Game of Live in Javascript
+# Conway's Game of Life in Javascript
 Javascript implementation of Conway's game of life. A generation is represented by a 2-dimensional
 array of booleans.
 

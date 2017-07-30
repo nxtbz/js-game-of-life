@@ -7,8 +7,7 @@ const create_canvas = () => {
     canvas.height = window.innerHeight;
 
     /* Insert it into the body element. */
-    let body = document.getElementsByTagName('body')[0];
-    body.appendChild(canvas);
+    document.body.appendChild(canvas);
 
     return canvas;
 };
@@ -19,12 +18,10 @@ const draw = (canvas, cell_size, generation) => {
 
     canvas_ctxt.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (row = 0; row < generation.length; ++row) {
-        for (col = 0; col < generation[0].length; ++col) {
+    for (row = 0; row < generation.length; ++row)
+        for (col = 0; col < generation[0].length; ++col)
             if (generation[row][col])
                 canvas_ctxt.fillRect(col * cell_size, row * cell_size, cell_size, cell_size);
-        }
-    }
 };
 
 /* Returns a function to create a generation. A generation is a 2-dimensional array of booleans. */
@@ -76,14 +73,17 @@ const game_of_life = (cell_size = 5) => {
 
     /* Handle key events. */
     document.addEventListener('keydown', (event) => {
-        if (event.key == 'c') {
+        if (event.key == 'c')
             current_generation = create_empty_generation(num_rows, num_cols);
-        } else if (event.key == 'r') {
+        else if (event.key == 'r')
             current_generation = create_random_generation(num_rows, num_cols);
-        } else {
+        else {
             running = !running;
-            if (running)
+            if (running) {
                 run();
+                document.getElementById('instructions').style.display = "none";
+            } else
+                document.getElementById('instructions').style.display = "block";
         }
         draw(canvas, cell_size, current_generation);
     });

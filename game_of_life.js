@@ -1,12 +1,14 @@
-/* Conway's Game of Life. A generation is represented by a 2-dimensional array of booleans. */
+/*
+ * Conway's Game of Life. A generation is represented by a 2-dimensional array of booleans. Every
+ * step of the simulation a new 2-dimensional array is created without modifying the current one.
+ */
 
-/* Create a canvas with the maximum width and height. */
+/* Create a canvas with the maximum width and height and insert it into the body element. */
 const create_canvas = () => {
     let canvas = document.createElement('canvas');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    /* Insert it into the body element. */
     document.body.appendChild(canvas);
 
     return canvas;
@@ -25,9 +27,10 @@ const draw = (canvas, cell_size, generation) => {
 };
 
 /* Returns a function to create a generation. A generation is a 2-dimensional array of booleans. */
-const create_generation = (cell_generator) => {
-    return (rows, cols) =>
-        (Array.from(Array(rows), () => Array.from(Array(cols), () => cell_generator())));
+const create_generation = (canvas, cell_size, cell_generator) => {
+    const rows = Math.floor(canvas.height / cell_size);
+    const cols = Math.floor(canvas.width / cell_size);
+    return () => (Array.from(Array(rows), () => Array.from(Array(cols), () => cell_generator())));
 };
 
 const get_num_alive_neighbours = (row, col, generation) => {
@@ -47,6 +50,7 @@ const get_num_alive_neighbours = (row, col, generation) => {
     return n_offsets.reduce(add_alive_neighbour, 0);
 };
 
+/* Generate a new generation (2-dimensional array), this does not modify the current generation. */
 const get_next_generation = (generation) => {
 
     const row_will_live = (row_cells, row) => {
@@ -64,23 +68,23 @@ const get_next_generation = (generation) => {
 
 const game_of_life = (cell_size = 5) => {
     let canvas = create_canvas();
-    const num_rows = Math.floor(canvas.height / cell_size);
-    const num_cols = Math.floor(canvas.width / cell_size);
     let running = false;
-    let create_random_generation = create_generation(() => Math.random() >= 0.5);
-    let create_empty_generation = create_generation(() => false);
-    let current_generation = create_random_generation(num_rows, num_cols);
+
+    /* Generate functions to create a random and empty generation. Start with a random generation. */
+    let create_random_generation = create_generation(canvas, cell_size, () => Math.random() >= 0.5);
+    let create_empty_generation = create_generation(canvas, cell_size, () => false);
+    let current_generation = create_random_generation();
 
     /* Handle key events. */
     document.addEventListener('keydown', (event) => {
         if (event.key == 'c')
-            current_generation = create_empty_generation(num_rows, num_cols);
+            current_generation = create_empty_generation();
         else if (event.key == 'r')
-            current_generation = create_random_generation(num_rows, num_cols);
+            current_generation = create_random_generation();
         else {
             running = !running;
             if (running) {
-                run();
+                step();
                 document.getElementById('instructions').style.display = "none";
             } else
                 document.getElementById('instructions').style.display = "block";
@@ -103,16 +107,16 @@ const game_of_life = (cell_size = 5) => {
         handle_click(event);
         canvas.addEventListener('mousemove', handle_click);
     });
-
     canvas.addEventListener('mouseup', () => {
         canvas.removeEventListener('mousemove', handle_click);
     });
 
-    const run = () => {
+    /* Game loop. Generate a new 2-dimensional array every step. */
+    const step = () => {
         if (running) {
             current_generation = get_next_generation(current_generation);
             draw(canvas, cell_size, current_generation);
-            window.requestAnimationFrame(run);
+            window.requestAnimationFrame(step);
         }
     };
 
